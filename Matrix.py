@@ -58,7 +58,7 @@ class Matrix:
             for i in range(vector.size):
                 new_vector.append(vector[i] / total_of_entries)
             new_matrix.append(Vector(new_vector))
-        return new_matrix
+        return Matrix(new_matrix)
 
     def find_matrix_without_row_column(self, row, column):
         new_matrix = []
