@@ -22,9 +22,22 @@ class Vector:
 
     def __mul__(self, other):
         if type(other) == int or type(other) == float:
+            return other * self
+
+    def __rmul__(self, other):
+        if type(other) == int or type(other) == float:
             new_vector = []
             for i in range(self.size):
                 new_vector.append(self[i] * other)
             return Vector(new_vector)
         else:
             raise TypeError
+
+
+if __name__ == '__main__':
+    def test():
+        v1 = Vector([1, 1, 0])
+        v2 = Vector([0, 1, 0])
+        print(2 * v1)
+
+    test()

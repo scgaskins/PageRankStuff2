@@ -20,7 +20,7 @@ class Matrix:
         return matrix_string
 
     def same_size(self, other):
-        if other.type == Matrix:
+        if type(other) == Matrix:
             return self.num_rows == other.num_rows and self.num_columns == other.num_columns
         else:
             raise TypeError
@@ -32,23 +32,61 @@ class Matrix:
         return row
 
     def __add__(self, other):
-        if other.type == Matrix:
+        if type(other) == Matrix:
             if self.same_size(other):
                 new_matrix = []
                 for i in range(self.num_columns):
                     new_matrix.append(self[i] + other[i])
                 return Matrix(new_matrix)
+            else:
+                raise Exception('matrices must be the same size to be added')
         raise TypeError
+
+    def __sub__(self, other):
+        if type(other) == Matrix:
+            return self + (-1 * other)
+        else:
+            raise TypeError
 
     def __mul__(self, other):
         if type(other) == int or type(other) == float:
-            self.multiply_scalars(other)
+            return self.multiply_scalars(other)
+        elif type(other) == Vector:
+            return self.multiply_with_vector(other)
+        elif type(other) == Matrix:
+            return self.multiply_matrices(other)
+        else:
+            raise TypeError
+
+    def __rmul__(self, other):
+        if type(other) == int or type(other) == float:
+            return self.multiply_scalars(other)
 
     def multiply_scalars(self, scalar):
         new_matrix = []
         for i in range(self.num_columns):
             new_matrix.append(self[i] * scalar)
         return Matrix(new_matrix)
+
+    def multiply_with_vector(self, other):
+        if other.size == self.num_columns:
+            products = []
+            for i in range(self.num_rows):
+                products.append(0)
+                for j in range(self.num_columns):
+                    products[i] += (self[j][i] * other[j])
+            return Vector(products)
+        else:
+            raise Exception('Can only multiply with vectors of size == num columns')
+
+    def multiply_matrices(self, other):
+        if self.num_columns == other.num_rows:
+            new_matrix = []
+            for i in range(other.num_columns):
+                new_matrix.append(self * other[i])
+            return Matrix(new_matrix)
+        else:
+            raise Exception("columns on left must equal rows on right")
 
     def get_stochastic_matrix(self):
         new_matrix = []
@@ -132,13 +170,15 @@ class Matrix:
 
 if __name__ == '__main__':
     def test():
-        vectors = []
-        for i in range(8):
-            v = [0] * 8
-            v[i] = 1
-            vectors.append(Vector(v))
-        identity = Matrix(vectors)
-        print(identity)
-        print(identity.get_determinant())
+        v1 = Vector([2, 1])
+        v2 = Vector([3, -5])
+        m = Matrix([v1, v2])
+        print(m)
+        u1 = Vector([4, 1])
+        u2 = Vector([3, -2])
+        u3 = Vector([6, 3])
+        m2 = Matrix([u1, u2, u3])
+        print(m)
+        print(m - m2)
 
     test()
