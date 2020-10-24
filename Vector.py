@@ -3,6 +3,12 @@ class Vector:
         self.entries = entries
         self.size = len(entries)
 
+    def duplicate_vector(self):
+        duplicate = []
+        for i in range(self.size):
+            duplicate.append(self[i])
+        return Vector(duplicate)
+
     def __repr__(self):
         s = ''
         for i in range(self.size):
@@ -12,6 +18,9 @@ class Vector:
 
     def __getitem__(self, item):
         return self.entries[item]
+
+    def __setitem__(self, key, value):
+        self.entries[key] = value
 
     def __add__(self, other):
         if self.size == other.size:
@@ -38,6 +47,8 @@ if __name__ == '__main__':
     def test():
         v1 = Vector([1, 1, 0])
         v2 = Vector([0, 1, 0])
-        print(2 * v1)
+        print(v1)
+        v1[0] = 2
+        print(v1)
 
     test()
