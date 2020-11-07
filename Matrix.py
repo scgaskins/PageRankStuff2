@@ -1,4 +1,5 @@
 from Vector import Vector
+from decimal import *
 
 
 class Matrix:
@@ -46,6 +47,8 @@ class Matrix:
                 return Matrix(new_matrix)
             else:
                 raise Exception('matrices must be the same size to be added')
+        elif type(other) == Vector and self.num_columns == 1:
+            return self + Matrix([other])
         raise TypeError
 
     def __sub__(self, other):
@@ -55,7 +58,7 @@ class Matrix:
             raise TypeError
 
     def __mul__(self, other):
-        if type(other) == int or type(other) == float:
+        if type(other) == int or type(other) == float or type(other) == Decimal:
             return self.multiply_scalars(other)
         elif type(other) == Vector:
             return self.multiply_with_vector(other)
@@ -65,7 +68,7 @@ class Matrix:
             raise TypeError
 
     def __rmul__(self, other):
-        if type(other) == int or type(other) == float:
+        if type(other) == int or type(other) == float or type(other) == Decimal:
             return self.multiply_scalars(other)
 
     def multiply_scalars(self, scalar):
@@ -97,7 +100,7 @@ class Matrix:
     def get_stochastic_matrix(self):
         new_matrix = []
         for vector in self.matrix:
-            total_of_entries = sum(vector.entries)
+            total_of_entries = Decimal(sum(vector.entries))
             new_vector = []
             for i in range(vector.size):
                 new_vector.append(vector[i] / total_of_entries)
@@ -193,7 +196,7 @@ class Matrix:
     def get_multiple_of_row(self, row_index, multiplier):
         multiple_of_row = self.get_row(row_index)
         for i in range(len(multiple_of_row)):
-            multiple_of_row[i] = multiple_of_row[i] * multiplier
+            multiple_of_row[i] = multiple_of_row[i] * Decimal(multiplier)
         return multiple_of_row
 
     def add_multiple_of_other_row_to_row(self, row_index, other_row_index, multiplier):
@@ -281,12 +284,12 @@ class Matrix:
 
 if __name__ == '__main__':
     def test():
-        v1 = Vector([2, 1, -5])
-        v2 = Vector([1, 0, 1])
-        m = Matrix([v1, v2])
-        u1 = Vector([1, 1, 1])
-        u2 = Vector([1, 1, 1])
-        m2 = Matrix([u1, u2])
-        print(m2 - m)
+        v1 = Vector([4, 1, 3, 8])
+        v2 = Vector([0, 7, 0, -4])
+        v3 = Vector([0, 3, 0, 2])
+        v4 = Vector([5, -5, 0, 7])
+        m = Matrix([v1, v2, v3, v4])
+        print(m)
+        print(m.get_determinant())
 
     test()
