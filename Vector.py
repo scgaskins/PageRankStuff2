@@ -1,9 +1,9 @@
-from decimal import *
+from fractions import *
 
 
 class Vector:
     def __init__(self, entries):
-        self.entries = list(map(Decimal, entries))
+        self.entries = list(map(Fraction, entries))
         self.size = len(entries)
 
     def duplicate_vector(self):
@@ -25,7 +25,7 @@ class Vector:
     # Any entries are converted to decimals before
     # being put in
     def __setitem__(self, key, value):
-        self.entries[key] = Decimal(value)
+        self.entries[key] = Fraction(value)
 
     def __add__(self, other):
         if self.size == other.size:
@@ -41,15 +41,15 @@ class Vector:
         raise TypeError
 
     def __mul__(self, other):
-        if type(other) == int or type(other) == float or type(other) == Decimal:
+        if type(other) == int or type(other) == float or type(other) == Fraction:
             return other * self
         raise TypeError("Can only multiply vectors by scalars")
 
     def __rmul__(self, other):
-        if type(other) == int or type(other) == float or type(other) == Decimal:
+        if type(other) == int or type(other) == float or type(other) == Fraction:
             new_vector = []
             for i in range(self.size):
-                new_vector.append(self[i] * Decimal(other))
+                new_vector.append(self[i] * Fraction(other))
             return Vector(new_vector)
         else:
             raise TypeError("Can only multiply vectors by scalars")

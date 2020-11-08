@@ -1,5 +1,5 @@
 from Vector import Vector
-from decimal import *
+from fractions import *
 
 
 class Matrix:
@@ -38,6 +38,12 @@ class Matrix:
             row.append(self[i][row_index])
         return row
 
+    def is_zero_row(self, row_index):
+        for entry in self.get_row(row_index):
+            if entry != 0:
+                return False
+        return True
+
     def __add__(self, other):
         if type(other) == Matrix:
             if self.same_size(other):
@@ -58,7 +64,7 @@ class Matrix:
             raise TypeError
 
     def __mul__(self, other):
-        if type(other) == int or type(other) == float or type(other) == Decimal:
+        if type(other) == int or type(other) == float or type(other) == Fraction:
             return self.multiply_scalars(other)
         elif type(other) == Vector:
             return self.multiply_with_vector(other)
@@ -68,7 +74,7 @@ class Matrix:
             raise TypeError
 
     def __rmul__(self, other):
-        if type(other) == int or type(other) == float or type(other) == Decimal:
+        if type(other) == int or type(other) == float or type(other) == Fraction:
             return self.multiply_scalars(other)
 
     def multiply_scalars(self, scalar):
@@ -100,7 +106,7 @@ class Matrix:
     def get_stochastic_matrix(self):
         new_matrix = []
         for vector in self.matrix:
-            total_of_entries = Decimal(sum(vector.entries))
+            total_of_entries = Fraction(sum(vector.entries), 1)
             new_vector = []
             for i in range(vector.size):
                 new_vector.append(vector[i] / total_of_entries)
@@ -196,7 +202,7 @@ class Matrix:
     def get_multiple_of_row(self, row_index, multiplier):
         multiple_of_row = self.get_row(row_index)
         for i in range(len(multiple_of_row)):
-            multiple_of_row[i] = multiple_of_row[i] * Decimal(multiplier)
+            multiple_of_row[i] = multiple_of_row[i] * Fraction(multiplier, 1)
         return multiple_of_row
 
     def add_multiple_of_other_row_to_row(self, row_index, other_row_index, multiplier):
@@ -281,15 +287,45 @@ class Matrix:
         new_matrix.put_in_reduced_echelon_form()
         return new_matrix
 
+    # Functions for finding eigenvector
+    def get_lambda_times_i_matrix(self, value):
+        vectors = []
+        for i in range(self.num_columns):
+            vector_entries = [0] * self.num_rows
+            vector_entries[i] = value
+            vectors.append(Vector(vector_entries))
+        return Matrix(vectors)
+
+    def find_eigenvector_matrix(self, eigenvalue):
+        lambda_i_matrix = self.get_lambda_times_i_matrix(eigenvalue)
+        print(self - lambda_i_matrix)
+        return (self - lambda_i_matrix).row_reduce()
+
+    def get_eigenvector(self, eigenvalue):
+        eigenvector_matrix = self.find_eigenvector_matrix(eigenvalue)
+        print(eigenvector_matrix)
+        eigenvector_entries = [0] * eigenvector_matrix.num_rows
+        for i in range(eigenvector_matrix.num_rows-1, -1, -1):
+            if eigenvector_matrix.is_zero_row(i):
+                eigenvector_entries[i] = 1
+            else:
+                pos = eigenvector_matrix.find_first_non_zero_in_row(i)
+                for j in range(pos+1, eigenvector_matrix.num_columns):
+                    eigenvector_entries[i] += (-1 * eigenvector_matrix[j][i]) * eigenvector_entries[j]
+        return Vector(eigenvector_entries)
+
 
 if __name__ == '__main__':
     def test():
-        v1 = Vector([4, 1, 3, 8])
-        v2 = Vector([0, 7, 0, -4])
-        v3 = Vector([0, 3, 0, 2])
-        v4 = Vector([5, -5, 0, 7])
+        v1 = Vector([0, 4, 6, 5])
+        v2 = Vector([5, 0, 3, 7])
+        v3 = Vector([7, 5, 0, 8])
+        v4 = Vector([2, 8, 6, 0])
         m = Matrix([v1, v2, v3, v4])
         print(m)
-        print(m.get_determinant())
+        m = m.get_stochastic_matrix()
+        print(m)
+        print(m.get_eigenvector(1))
+
 
     test()
