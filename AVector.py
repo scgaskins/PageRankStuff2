@@ -1,7 +1,7 @@
 from fractions import *
 
 
-class Vector:
+class AVector:
     def __init__(self, entries):
         self.entries = list(map(Fraction, entries))
         self.size = len(entries)
@@ -10,7 +10,7 @@ class Vector:
         duplicate = []
         for i in range(self.size):
             duplicate.append(self[i])
-        return Vector(duplicate)
+        return AVector(duplicate)
 
     def __repr__(self):
         s = ''
@@ -32,11 +32,11 @@ class Vector:
             new_vector = []
             for i in range(self.size):
                 new_vector.append(self[i] + other[i])
-            return Vector(new_vector)
+            return AVector(new_vector)
         raise Exception("Can't add vectors of different sizes")
 
     def __sub__(self, other):
-        if type(other) == Vector:
+        if type(other) == AVector:
             return self + (-1 * other)
         raise TypeError
 
@@ -50,14 +50,14 @@ class Vector:
             new_vector = []
             for i in range(self.size):
                 new_vector.append(self[i] * Fraction(other))
-            return Vector(new_vector)
+            return AVector(new_vector)
         else:
             raise TypeError("Can only multiply vectors by scalars")
 
 
 if __name__ == '__main__':
     def test():
-        v1 = Vector([1, 1, 0])
+        v1 = AVector([1, 1, 0])
         v2 = v1.duplicate_vector()
         print(v1)
         print(v2)

@@ -1,8 +1,8 @@
-from Vector import Vector
+from AVector import AVector
 from fractions import *
 
 
-class Matrix:
+class AMatrix:
     def __init__(self, matrix):
         self.matrix = matrix  # should be a list of vectors
         self.num_rows = matrix[0].size
@@ -12,7 +12,7 @@ class Matrix:
         duplicate = []
         for i in range(self.num_columns):
             duplicate.append(self[i].duplicate_vector())
-        return Matrix(duplicate)
+        return AMatrix(duplicate)
 
     def __getitem__(self, item):
         return self.matrix[item]
@@ -27,7 +27,7 @@ class Matrix:
         return matrix_string
 
     def same_size(self, other):
-        if type(other) == Matrix:
+        if type(other) == AMatrix:
             return self.num_rows == other.num_rows and self.num_columns == other.num_columns
         else:
             raise TypeError
@@ -45,20 +45,20 @@ class Matrix:
         return True
 
     def __add__(self, other):
-        if type(other) == Matrix:
+        if type(other) == AMatrix:
             if self.same_size(other):
                 new_matrix = []
                 for i in range(self.num_columns):
                     new_matrix.append(self[i] + other[i])
-                return Matrix(new_matrix)
+                return AMatrix(new_matrix)
             else:
                 raise Exception('matrices must be the same size to be added')
-        elif type(other) == Vector and self.num_columns == 1:
-            return self + Matrix([other])
+        elif type(other) == AVector and self.num_columns == 1:
+            return self + AMatrix([other])
         raise TypeError
 
     def __sub__(self, other):
-        if type(other) == Matrix:
+        if type(other) == AMatrix:
             return self + (-1 * other)
         else:
             raise TypeError
@@ -66,9 +66,9 @@ class Matrix:
     def __mul__(self, other):
         if type(other) == int or type(other) == float or type(other) == Fraction:
             return self.multiply_scalars(other)
-        elif type(other) == Vector:
+        elif type(other) == AVector:
             return self.multiply_with_vector(other)
-        elif type(other) == Matrix:
+        elif type(other) == AMatrix:
             return self.multiply_matrices(other)
         else:
             raise TypeError
@@ -81,7 +81,7 @@ class Matrix:
         new_matrix = []
         for i in range(self.num_columns):
             new_matrix.append(self[i] * scalar)
-        return Matrix(new_matrix)
+        return AMatrix(new_matrix)
 
     def multiply_with_vector(self, other):
         if other.size == self.num_columns:
@@ -90,7 +90,7 @@ class Matrix:
                 products.append(0)
                 for j in range(self.num_columns):
                     products[i] += (self[j][i] * other[j])
-            return Vector(products)
+            return AVector(products)
         else:
             raise Exception('Can only multiply with vectors of size == num columns')
 
@@ -99,7 +99,7 @@ class Matrix:
             new_matrix = []
             for i in range(other.num_columns):
                 new_matrix.append(self * other[i])
-            return Matrix(new_matrix)
+            return AMatrix(new_matrix)
         else:
             raise Exception("columns on left must equal rows on right")
 
@@ -110,8 +110,8 @@ class Matrix:
             new_vector = []
             for i in range(vector.size):
                 new_vector.append(vector[i] / total_of_entries)
-            new_matrix.append(Vector(new_vector))
-        return Matrix(new_matrix)
+            new_matrix.append(AVector(new_vector))
+        return AMatrix(new_matrix)
 
     # Functions for finding the determinant
 
@@ -123,8 +123,8 @@ class Matrix:
                 for j in range(self.num_rows):
                     if j != row:
                         new_vector.append(self[i][j])
-                new_matrix.append(Vector(new_vector))
-        return Matrix(new_matrix)
+                new_matrix.append(AVector(new_vector))
+        return AMatrix(new_matrix)
 
     def find_row_with_most_zeros(self):
         most_zeros = 0
@@ -293,8 +293,8 @@ class Matrix:
         for i in range(self.num_columns):
             vector_entries = [0] * self.num_rows
             vector_entries[i] = value
-            vectors.append(Vector(vector_entries))
-        return Matrix(vectors)
+            vectors.append(AVector(vector_entries))
+        return AMatrix(vectors)
 
     def find_eigenvector_matrix(self, eigenvalue):
         lambda_i_matrix = self.get_lambda_times_i_matrix(eigenvalue)
@@ -312,16 +312,16 @@ class Matrix:
                 pos = eigenvector_matrix.find_first_non_zero_in_row(i)
                 for j in range(pos+1, eigenvector_matrix.num_columns):
                     eigenvector_entries[i] += (-1 * eigenvector_matrix[j][i]) * eigenvector_entries[j]
-        return Vector(eigenvector_entries)
+        return AVector(eigenvector_entries)
 
 
 if __name__ == '__main__':
     def test():
-        v1 = Vector([0, 4, 6, 5])
-        v2 = Vector([5, 0, 3, 7])
-        v3 = Vector([7, 5, 0, 8])
-        v4 = Vector([2, 8, 6, 0])
-        m = Matrix([v1, v2, v3, v4])
+        v1 = AVector([0, 4, 6, 5])
+        v2 = AVector([5, 0, 3, 7])
+        v3 = AVector([7, 5, 0, 8])
+        v4 = AVector([2, 8, 6, 0])
+        m = AMatrix([v1, v2, v3, v4])
         print(m)
         m = m.get_stochastic_matrix()
         print(m)
