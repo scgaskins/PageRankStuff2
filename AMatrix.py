@@ -298,12 +298,10 @@ class AMatrix:
 
     def find_eigenvector_matrix(self, eigenvalue):
         lambda_i_matrix = self.get_lambda_times_i_matrix(eigenvalue)
-        print(self - lambda_i_matrix)
         return (self - lambda_i_matrix).row_reduce()
 
     def get_eigenvector(self, eigenvalue):
         eigenvector_matrix = self.find_eigenvector_matrix(eigenvalue)
-        print(eigenvector_matrix)
         eigenvector_entries = [0] * eigenvector_matrix.num_rows
         for i in range(eigenvector_matrix.num_rows-1, -1, -1):
             if eigenvector_matrix.is_zero_row(i):
@@ -317,15 +315,31 @@ class AMatrix:
 
 if __name__ == '__main__':
     def test():
-        v1 = AVector([0, 4, 6, 5])
-        v2 = AVector([5, 0, 3, 7])
-        v3 = AVector([7, 5, 0, 8])
-        v4 = AVector([2, 8, 6, 0])
-        m = AMatrix([v1, v2, v3, v4])
-        print(m)
-        m = m.get_stochastic_matrix()
-        print(m)
-        print(m.get_eigenvector(1))
+        soccer2019 = [[0, 2, 3, 3, 6, 1, 5, 3], [0, 0, 3, 5, 4, 5, 9, 1], [0, 2, 0, 3, 2, 5, 8, 3],
+                      [1, 0, 0, 0, 1, 1, 3, 0], [0, 0, 1, 3, 0, 1, 2, 1], [2, 1, 3, 2, 2, 0, 4, 0],
+                      [0, 0, 1, 1, 1, 0, 0, 0], [0, 3, 1, 3, 2, 0, 3, 0]]
+        vectors = []
+        for i in soccer2019:
+            vectors.append(AVector(i))
+        TheMatrix = AMatrix(vectors)
+        print(TheMatrix)
+        simplifiedMatrix = TheMatrix.get_stochastic_matrix()
+        print(simplifiedMatrix)
+        pageRankVector = simplifiedMatrix.get_eigenvector(1)
+        print(pageRankVector)
+        total = 0
+        for i in pageRankVector:
+            total += i
+        print(total)
+        PageRankValue = []
+        for i in range(8):
+            pageRankVector[i] = pageRankVector[i] / total
+            PageRankValue.append(float(pageRankVector[i]))
+        print(PageRankValue)
+        new_total = 0
+        for i in range(8):
+            new_total += PageRankValue[i]
+        print(new_total)
 
 
     test()
