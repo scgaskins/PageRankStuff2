@@ -54,6 +54,16 @@ class AVector:
         else:
             raise TypeError("Can only multiply vectors by scalars")
 
+    def dot_product(self, other):
+        if type(other) == AVector:
+            if other.size == self.size:
+                product = 0
+                for i in range(self.size):
+                    product += self[i] * other[i]
+                return product
+            raise Exception("vectors must be the same size for dot products")
+        raise TypeError("Can only dot vectors with vectors")
+
 
 if __name__ == '__main__':
     def test():

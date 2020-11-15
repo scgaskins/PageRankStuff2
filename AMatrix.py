@@ -113,6 +113,12 @@ class AMatrix:
             new_matrix.append(AVector(new_vector))
         return AMatrix(new_matrix)
 
+    def get_transpose(self):
+        new_vectors = []
+        for i in range(self.num_rows):
+            new_vectors.append(AVector(self.get_row(i)))
+        return AMatrix(new_vectors)
+
     # Functions for finding the determinant
 
     def find_matrix_without_row_column(self, row, column):
@@ -315,31 +321,13 @@ class AMatrix:
 
 if __name__ == '__main__':
     def test():
-        soccer2019 = [[0, 2, 3, 3, 6, 1, 5, 3], [0, 0, 3, 5, 4, 5, 9, 1], [0, 2, 0, 3, 2, 5, 8, 3],
-                      [1, 0, 0, 0, 1, 1, 3, 0], [0, 0, 1, 3, 0, 1, 2, 1], [2, 1, 3, 2, 2, 0, 4, 0],
-                      [0, 0, 1, 1, 1, 0, 0, 0], [0, 3, 1, 3, 2, 0, 3, 0]]
-        vectors = []
-        for i in soccer2019:
-            vectors.append(AVector(i))
-        TheMatrix = AMatrix(vectors)
-        print(TheMatrix)
-        simplifiedMatrix = TheMatrix.get_stochastic_matrix()
-        print(simplifiedMatrix)
-        pageRankVector = simplifiedMatrix.get_eigenvector(1)
-        print(pageRankVector)
-        total = 0
-        for i in pageRankVector:
-            total += i
-        print(total)
-        PageRankValue = []
-        for i in range(8):
-            pageRankVector[i] = pageRankVector[i] / total
-            PageRankValue.append(float(pageRankVector[i]))
-        print(PageRankValue)
-        new_total = 0
-        for i in range(8):
-            new_total += PageRankValue[i]
-        print(new_total)
+        u1 = AVector([Fraction(1), Fraction(1), Fraction(-2)])
+        u2 = AVector([Fraction(5), Fraction(-1), Fraction(2)])
+        u3 = AVector([0, 0, 1])
+        uh = (Fraction(-1, 3) * u1) + (Fraction(2, 30) * u2)
+        print(uh)
+        v = u3 - uh
+        print(v)
 
 
     test()
