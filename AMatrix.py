@@ -110,14 +110,23 @@ class AMatrix:
         else:
             raise Exception("columns on left must equal rows on right")
 
+    def generate_personalization_vector(self):
+        vector = []
+        for i in range(self.num_rows):
+            vector.append(Fraction(1, self.num_rows))
+        return AVector(vector)
+
     def get_stochastic_matrix(self):
         new_matrix = []
         for vector in self.matrix:
             total_of_entries = Fraction(sum(vector.entries), 1)
-            new_vector = []
-            for i in range(vector.size):
-                new_vector.append(vector[i] / total_of_entries)
-            new_matrix.append(AVector(new_vector))
+            if total_of_entries == 0:
+                new_matrix.append(self.generate_personalization_vector())
+            else:
+                new_vector = []
+                for i in range(vector.size):
+                    new_vector.append(vector[i] / total_of_entries)
+                new_matrix.append(AVector(new_vector))
         return AMatrix(new_matrix)
 
     def get_transpose(self):
@@ -328,12 +337,9 @@ class AMatrix:
 
 if __name__ == '__main__':
     def test():
-        a1 = AVector([1, 1, 1, 1])
-        a2 = AVector([1, 2, 3, 4])
-        A = AMatrix([a1, a2])
-        b = AVector([1, 2, 3, 3])
-        ATA = A.get_transpose() * A
-        ATB = A.get_transpose() * b
-        print(ATA.augment(ATB).row_reduce())
+        v1 = AVector([0, 0, 0])
+        v2 = AVector([1, 1, 1])
+        v3 = AVector([2, 5, 4])
+        print(AMatrix([v1, v2, v3]).get_stochastic_matrix())
 
     test()
