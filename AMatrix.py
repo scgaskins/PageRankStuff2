@@ -8,6 +8,13 @@ class AMatrix:
         self.num_rows = matrix[0].size
         self.num_columns = len(matrix)
 
+    def augment(self, b):
+        augmented = []
+        for i in range(self.num_columns):
+            augmented.append(self[i].duplicate_vector())
+        augmented.append(b)
+        return AMatrix(augmented)
+
     def duplicate_matrix(self):
         duplicate = []
         for i in range(self.num_columns):
@@ -254,7 +261,7 @@ class AMatrix:
 
     def set_pivot_value_to_one(self, pivot_row_index, pivot_index):
         pivot_value = self[pivot_index][pivot_row_index]
-        if pivot_value != 1:
+        if pivot_value != 1 and pivot_value != 0:
             multiplier = 1/pivot_value
             self.multiply_row(pivot_row_index, multiplier)
 
@@ -270,7 +277,7 @@ class AMatrix:
         pivot_value = self[pivot_index][pivot_row_index]
         for i in range(pivot_row_index - 1, -1, -1):
             value_above_pivot = self[pivot_index][i]
-            if value_above_pivot != 0:
+            if value_above_pivot != 0 and pivot_value != 0:
                 multiplier = (-1 * value_above_pivot) / pivot_value
                 self.add_multiple_of_other_row_to_row(i, pivot_row_index, multiplier)
 
@@ -321,13 +328,12 @@ class AMatrix:
 
 if __name__ == '__main__':
     def test():
-        u1 = AVector([Fraction(1), Fraction(1), Fraction(-2)])
-        u2 = AVector([Fraction(5), Fraction(-1), Fraction(2)])
-        u3 = AVector([0, 0, 1])
-        uh = (Fraction(-1, 3) * u1) + (Fraction(2, 30) * u2)
-        print(uh)
-        v = u3 - uh
-        print(v)
-
+        a1 = AVector([1, 1, 1, 1])
+        a2 = AVector([1, 2, 3, 4])
+        A = AMatrix([a1, a2])
+        b = AVector([1, 2, 3, 3])
+        ATA = A.get_transpose() * A
+        ATB = A.get_transpose() * b
+        print(ATA.augment(ATB).row_reduce())
 
     test()
