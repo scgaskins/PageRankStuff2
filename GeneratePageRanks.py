@@ -79,39 +79,64 @@ def get_pageRankVector(TheMatrix):
     return PageRankValues, non_participating_teams
 
 
-def printResults(results):
+def sort_teams_by_rank(page_ranks, removed_teams, team_names):
+    sorted_ranks = page_ranks.copy()
+    while None in sorted_ranks:
+        sorted_ranks.remove(None)
+    sorted_ranks.sort(reverse=True)
+    sorted_team_names = []
+    for i in range(len(sorted_ranks)):
+        for j in range(len(page_ranks)):
+            if sorted_ranks[i] == page_ranks[j]:
+                sorted_team_names.append(team_names[j])
+    for team_index in removed_teams:
+        sorted_team_names.append(team_names[team_index])
+        sorted_ranks.append(None)
+    return sorted_ranks, sorted_team_names
+
+
+def printResults(results, removed_teams):
     names = ["HDX", "BRS", "MIL", "CEN", "SEW", "BER", "OGL", "RHD"]
-    for i in range(len(results)):
-        if results[i] is not None:
-            print(names[i], results[i])
+    sorted_results, sorted_names = sort_teams_by_rank(results, removed_teams, names)
+    for i in range(len(sorted_results)):
+        if sorted_results[i] is not None:
+            print(f"{i+1}. {sorted_names[i]} {sorted_results[i]}")
         else:
-            print(f"{names[i]} N/A")
+            print(f"{sorted_names[i]} N/A")
     print('\n')
 
 
-def averageResults(a, b, c, d, e, f, g, h):
-    names = ["HDX", "BRS", "MIL", "CEN", "SEW", "BER", "OGL", "RHD"]
-    ranks = [1, 2, 3, 4, 5, 6, 7, 8]
-    totals = []
-    for i in range(8):
-        totals.append((a[i] + b[i] + c[i] + d[i] + e[i] + f[i] + g[i] + h[i]) / 8)
-    # for i in range(8):
-    # print(names[i], totals[i])
-    sorted_ranks = totals.copy()
-    sorted_ranks.sort(reverse=True)
-    for i in range(sorted_ranks.len()):
-        for j in range(totals.len()):
-            if sorted_ranks[i] == totals[j]:
-                print(ranks[i], names[j], sorted_ranks[i])
+def average_results_for_season(season_ranks):
+    team_totals = [0] * len(season_ranks[0])
+    total_seasons_teams_played = [0] * len(season_ranks[0])
+    averaged_ranks = []
+    non_participating_teams = []
+    for season in season_ranks:
+        for i in range(len(season)):
+            if season[i] is not None:
+                team_totals[i] += season[i]
+                total_seasons_teams_played[i] += 1
+    for team_index in range(len(team_totals)):
+        if total_seasons_teams_played[team_index] > 0:
+            averaged_ranks.append(team_totals[team_index] / total_seasons_teams_played[team_index])
+        else:
+            averaged_ranks.append(None)
+            non_participating_teams.append(team_index)
+    return averaged_ranks, non_participating_teams
 
 
 if __name__ == '__main__':
     def print_all_pageranks(sport, sport_name):
+        all_season_ranks = []
         for i in range(len(sport)):
             print(f'{sport_name} {2013 + i} Season')
             season_matrix = Create_Matrix(sport[i])
             season_results, excluded_teams = get_pageRankVector(season_matrix.get_transpose())
-            printResults(season_results)
+            printResults(season_results, excluded_teams)
+            all_season_ranks.append(season_results)
+        print(f'{sport_name} Ranks Averaged Across All Seasons')
+        averaged_ranks, non_participants = average_results_for_season(all_season_ranks)
+        printResults(averaged_ranks, non_participants)
 
 
     def main():
